@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+    .navbar {
+      background-color: #f8f8f8;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .container{
+      padding-left: 5%;
+      padding-right: 5%;
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #333;
+    }
+
+    .nav-item {
+      padding-left: 10px;
+      text-decoration: none;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    
+    .nav-phone {
+        display: flex;
+        align-items: center;
+        color: #333;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-right: 1.5rem;
+    }
+    
+    .nav-phone i {
+        margin-right: 5px;
+        color: #666;
+    }
+    
+    .login-btn {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    
+    .login-btn i {
+        margin-right: 5px;
+    }
+    /* ------- */
+    .main-1 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .gallery {
+      width: 100%;
+    }
+    
+    .main-img-container {
+      width: 100%;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    
+    .main-img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+      transition: all 0.3s ease;
+    }
+    
+    .thumbnails {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    
+    .thumbnail {
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      object-fit: cover;
+      transition: all 0.2s ease;
+    }
+    
+    .thumbnail:hover {
+      transform: translateY(-3px);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .thumbnails {
+        gap: 5px;
+      }
+      
+      .thumbnail {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .thumbnail {
+        width: 50px;
+        height: 50px;
+      }
+    }
+        /* -------- */
+    /* Product Details Styles */
+    .product-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .product-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .product-des {
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    
+    .product-price {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 15px 0;
+    }
+    
+    /* Frame Selection Styles */
+    .frame-options {
+      margin-bottom: 20px;
+    }
+    
+    .selection-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .frame-sizes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .frame-option {
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      min-width: 120px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .frame-option:hover {
+      background-color: #f9f9f9;
+    }
+    
+    .active-option {
+      border: 2px solid #000;
+      background-color: #f9f9f9;
+    }
+    
+    .frame-size {
+      font-weight: 600;
+      display: block;
+    }
+    
+    .frame-width {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .lens-selection {
+      margin-top: 10px;
+    }
+    
+    .lens-button {
+      background-color: #fff;
+      border: 1px solid #000;
+      color: #000;
+      padding: 12px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .lens-button:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      margin: 15px 0;
+    }
+    
+    .total-label {
+      font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+      .frame-sizes {
+        flex-direction: row;
+      }
+      
+      .frame-option {
+        min-width: 100px;
+      }
+      
+      .thumbnail {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .frame-option {
+        min-width: 45%;
+        flex-grow: 1;
+      }
+      
+      .thumbnail {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .benefits-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+    
+    .benefit-item {
+        text-align: center;
+        width: 23%;
+        min-width: 100px;
+        margin-bottom: 15px;
+    }
+    
+    .benefit-item i {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+    
+    .benefit-title {
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .benefit-subtitle {
+        font-size: 10px;
+        color: #666;
+    }
+    
+    .product-details {
+        margin-top: 30px;
+        padding: 20px 0;
+        border-top: 1px solid #eee;
+    }
+    
+
+    
+    @media (max-width: 767.98px) {
+        .main-img {
+            max-height: 300px;
+        }
+        
+        .thumbnail {
+            width: 60px;
+            height: 45px;
+        }
+        
+        .benefit-item {
+            width: 48%;
+        }
+    }
+        /* -------- */
+        .footer {
+  background-color: rgb(83, 83, 83);
+  color: #fff;
+  padding: 40px 20px;
+  font-size: 14px;
+  }
+  .footer a {
+    color: #ccc;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    color: #ffffff;
+  }
+  .footer h3 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .footer hr {
+    border-top: 1px solid #ccc;
+  }
+  .app-links img {
+    height: 40px;
+    margin-right: 10px;
+  }
+  .social-icons a {
+    color: #fff;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+  .social-icons a:hover {
+    color: #0d6efd;
+  }
+    </style>
+</head>
+<body>
+  <nav class="navbar navbar-inverse12">
+    <div class="container text-center" style="font-family: serif;">    
+      <h4>Experience eyewear in a whole new way:Visit your nearest store and treat yourself to 100+ eyewear styles</h4>
+    </div>
+  </nav>
+
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <span class="brand-text">O P T I C F R A M E S</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="ms-auto d-flex align-items-center">
+              <a href="{% url 'Profile' %}" class="nav-item"> Profile </a>
+                <a href="{% url 'about' %}" class="nav-item"> About </a>
+                <a href="{% url 'view_cart' %}" class="nav-item"> Cart </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'signout' %}" class="nav-item login-btn"><i class="fas fa-user"></i>Logout</a>
+                {% else %}
+                <a href="{% url 'userin' %}" class="nav-item login-btn"><i class="fas fa-user"></i>Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="main-1">
+  <div class="container">
+    <div class="row">
+      <!-- Product Images Gallery -->
+      <div class="col-md-6">
+        <div class="gallery">
+          <div class="main-img-container">
+            <img src="{{ first_image.url }}" alt="{{ product.name }}" class="main-img" id="mainImg">
+          </div>
+          
+          {% if images|length > 1 %}
+          <div class="thumbnails">
+            {% for img in images %}
+            <img src="{{ img.url }}" alt="{{ product.name }}" class="thumbnail {% if forloop.first %}active{% endif %}" onclick="changeImage(this)">
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        
+        <div class="rating mt-3">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-count">(1,234)</span>
+        </div>
+      </div>
+      
+      <!-- Product Details Section -->
+      <div class="col-md-6">
+        <div class="product-details">
+          <h1 class="product-title">{{ product.name }}</h1>
+          <h3 class="product-des">{{ product.description|truncatewords:15 }}</h3>
+          
+          {% if product.category or product.gender %}
+          <div class="mb-3">
+            {% if product.category %}
+            <span class="badge bg-secondary">{{ product.category.name }}</span>
+            {% endif %}
+            {% if product.gender %}
+            <span class="badge bg-info">{{ product.gender.name }}</span>
+            {% endif %}
+          </div>
+          {% endif %}
+          
+          <div class="total-row">
+            <span class="total-label">Frame Total:</span>
+            <span class="product-price" id="totalPrice">₹ {{ product.price }}</span>
+          </div>
+          
+          <div class="lens-selection">
+            <form method="post" action="{% url 'cart' product.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ product.id }}">
+              <button type="submit" class="lens-button">ADD TO CART</button>
+            </form>
+          </div>
+        </div>
+        
+        <div class="lens-promo text-center mt-4">
+          <strong>60% OFF All Lenses | Starting  at $25.99</strong>
+        </div>
+        
+        <div class="benefits-container">
+          <div class="benefit-item">
+            <i class="fas fa-sync"></i>
+            <div class="benefit-title">30-Day</div>
+            <div class="benefit-subtitle">Returns</div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-shield-alt"></i>
+            <div class="benefit-title">1-Year</div>
+            <div class="benefit-subtitle">Warranty</div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-glasses"></i>
+            <div class="benefit-title">Free Frame</div>
+            <div class="benefit-subtitle">Adjustments</div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-truck"></i>
+            <div class="benefit-title">Free</div>
+            <div class="benefit-subtitle">Shipping</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Product Details Tabs -->
+    <div class="row">
+      <div class="col-12 product-details">
+        <ul class="nav nav-tabs" id="productTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Product Details</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab" aria-controls="shipping" aria-selected="false">Shipping & Returns</button>
+          </li>
+        </ul>
+        <div class="tab-content" id="productTabsContent">
+          <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+            <h5>Type: Prescription Eyeglasses</h5>
+            <p>{{ product.description }}</p>
+            
+            <ul>
+              <li>Gender: {% if product.gender %}{{ product.gender.name }}{% else %}Unisex{% endif %}</li>
+              <li>Material: Propionate</li>
+              <li>Color: {% if product.color %}{{ product.color }}{% else %}Various{% endif %}</li>
+              <li>Frame Type: Full Rim</li>
+              <li>Shape: Rectangle</li>
+              <li>Frame Style: Classic</li>
+              <li>Temple Length: Regular</li>
+            </ul>
+          </div>
+          <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
+            <h5>Free Shipping & Easy Returns</h5>
+            <p>Enjoy free standard shipping on all orders. Our returns process is simple - if you're not completely satisfied with your purchase, you can return any item within 30 days of delivery for a full refund or exchange.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-3 mb-4">
+        <h3>ＯＰＴＩＣＦＲＡＭＥ</h3>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h3>About Us</h3>
+        <ul class="list-unstyled">
+          <li><a href="#">We Are Hiring</a></li>
+          <li><a href="#">Refer And Earn</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Lenskart Coupons</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h3>Help</h3>
+        <ul class="list-unstyled">
+          <li><a href="#">FAQ's</a></li>
+          <li><a href="#">Grievance Redressal</a></li>
+          <li><a href="#">Cardemi</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 mb-4 text-md-end text-center">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="https://www.facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+          <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+          <a href="https://www.linkedin.com" target="_blank"><i class="bi bi-linkedin"></i></a>
+          <a href="https://www.instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3">
+      <div class="mb-2 mb-md-0">
+        <a href="#" class="me-3">T & C</a>
+        <a href="#" class="me-3">Privacy</a>
+        <a href="#" class="me-3">Disclaimer</a>
+      </div>
+      <div class="mb-2 mb-md-0">
+        Version 1.0.0 || Follow Us
+        <span class="social-icons">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-twitter"></i></a>
+        </span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+    <script>
+      function changeImage(element) {
+        // Update main image
+        document.getElementById('mainImg').src = element.src;
+        
+        // Remove active class from all thumbnails
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        
+        // Add active class to clicked thumbnail
+        element.classList.add('active');
+      }
+      function selectLenses() {
+      // This function would handle the lens selection process
+      // For example, it could open a modal or navigate to a lens selection page
+      alert('Proceeding to lens selection...');
+    }
+
+    </script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+ 
+</body>
+</html>

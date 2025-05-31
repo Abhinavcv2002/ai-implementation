@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - OPTIC FRAMES</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+      /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    .navbar-inverse {
+    background-color: #E5E5E5 !important;
+    border-color: #E5E5E5;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        color: #000;
+    }
+      /* ------ */
+
+      .product-card {
+        border: 1px solid #e0e0e0;
+        margin-bottom: 30px;
+        padding: 15px;
+        position: relative;
+        height: 100%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+
+      .product-img-container {
+        overflow: hidden;
+        margin-bottom: 15px;
+        position: relative;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 160px;
+      }
+
+      @media (max-width: 767.98px) {
+        .product-img-container {
+            height: 120px;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 991.98px) {
+        .product-img-container {
+            height: 140px;
+        }
+      }
+
+      .bestseller-badge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #f0f0f0;
+        color: #333;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 2px 8px;
+        z-index: 2;
+      }
+
+      .new-badge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #f0f0f0;
+        color: #333;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 2px 8px;
+        z-index: 2;
+      }
+
+      .additional-images-indicator {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        z-index: 3;
+      }
+      
+      .additional-images-indicator .label {
+        font-size: 10px;
+        padding: 3px 6px;
+        opacity: 0.9;
+      }
+
+      .product-info {
+        margin-top: 10px;
+      }
+
+      .product-name {
+        font-weight: bold;
+        margin-bottom: 0;
+      }
+
+      .product-category {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .product-colors {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .product-rating {
+        color: #f8ce0b;
+        margin-bottom: 5px;
+      }
+
+      .product-price {
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .original-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 16px;
+        margin-right: 5px;
+      }
+
+      .lens-discount {
+        color: #0275d8;
+        font-weight: bold;
+        float: right;
+      }
+
+      /* Add a gray background color and some padding to the footer */
+      footer {
+        background-color: #f2f2f2;
+        padding: 25px;
+      }
+        
+      .carousel-inner img {
+          width: 100%; /* Set width to 100% */
+          margin: auto;
+          min-height:200px;
+      }
+
+      /* Admin action buttons */
+      .admin-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+      }
+      
+      .btn-edit {
+        background-color: #5bc0de;
+        color: white;
+      }
+      
+      .btn-remove {
+        background-color: #d9534f;
+        color: white;
+      }
+
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      /* Modal styles */
+      .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+      }
+      
+      .modal-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+      }
+
+      /* Hide the carousel text when the screen is less than 600 pixels wide */
+      @media (max-width: 600px) {
+        .carousel-caption {
+          display: none; 
+        }
+      }
+    </style>  
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" style="background-color: grey;">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url 'index' %}" style="color: black;">ＯＰＴＩＣＦＲＡＭＥＳ</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{% url 'adminadd' %}" style="color: black;">Product Add</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'userin' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+      
+    <div class="container text-center">    
+      <div class="admin-header">
+        <h2>Admin Dashboard - Product Management</h2>
+        <a href="{% url 'adminadd' %}" class="btn btn-primary">
+          <span class="glyphicon glyphicon-plus"></span> Add New Product
+        </a>
+      </div>
+      
+      <div class="container-fluid">
+        <hr style="
+          border: 0;
+          height: 2px;
+          background-image: linear-gradient(to right, rgba(0, 0, 0, 0.678), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.678));
+          margin: 30px 0;
+        ">
+      </div>
+      
+      <div class="container py-5">
+        <div class="row g-4">
+            <!-- Product Cards -->
+            {% for i in product %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-container">
+                      <a href="#">
+                        <img src="{{i.image.url}}" alt="{{i.name}}" width="100%" class="img-fluid w-100 rounded">
+                      </a>
+                    </div>
+                    <div class="product-info">
+                        <h5 class="product-name">{{i.name}}</h5>
+                        <div class="product-category">{{i.category}}</div>
+                        <div class="product-rating">★★★★☆</div>
+                        <div class="lens-discount">60% Off Lenses</div>
+                        <div class="mt-3">
+                            <div>Frame:</div>
+                            <div class="product-price">Price: {{i.price}}</div>
+                        </div>
+                        <div class="admin-actions">
+                          <a href="{% url 'adminedit' i.id %}" class="btn btn-sm btn-edit">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                          </a>
+                          <button type="button" class="btn btn-sm btn-remove" data-toggle="modal" data-target="#deleteModal{{i.id}}">
+                            <span class="glyphicon glyphicon-trash"></span> Remove
+                          </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delete Confirmation Modal for each product -->
+                <div class="modal fade" id="deleteModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="deleteModalLabel">Confirm Deletion</h4>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to delete the product <strong>{{i.name}}</strong>?
+                        <p class="text-danger"><small>This action cannot be undone.</small></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <a href="{% url 'adminremove' i.id %}" class="btn btn-danger">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+              <div class="alert alert-info">
+                No products found. <a href="{% url 'adminadd' %}">Add your first product</a>.
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+      </div>
+      
+      <div class="container-fluid">
+        <hr style="
+          border: 0;
+          height: 2px;
+          background-image: linear-gradient(to right, rgba(0, 0, 0, 0.678), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.678));
+          margin: 30px 0;
+        ">
+      </div>
+    </div>
+
+    <footer class="container-fluid text-center">
+      <p>Admin Dashboard &copy; 2025 OPTIC FRAMES</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>  
+    <style>
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    .navbar-inverse {
+    background-color: #E5E5E5 !important;
+    border-color: #E5E5E5;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        color: #000;
+    }
+    @media (max-width: 768px) {
+      .col-md-6, .col-sm-6 {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      
+      h2 {
+        text-align: center;
+        font-size: 24px;
+      }
+      
+      h3 {
+        font-size: 18px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 20px;
+      }
+      
+      h3 {
+        font-size: 16px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+      
+      .img-responsive {
+        margin-bottom: 20px;
+      }
+    }
+    </style>
+</head>
+<body>
+    
+    <nav class="navbar navbar-inverse12">
+        <div class="container text-center" style="font-family: serif;">    
+          <h4>Experience eyewear in a whole new way:Visit your nearest store and treat yourself to 100+ eyewear styles</h4>
+        </div>
+      </nav>
+    
+    <nav class="navbar navbar-inverse" style="background-color: grey;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}" style="color: black;">ＯＰＴＩＣＦＲＡＭＥＳ</a>
+        </div>
+    
+    
+        <form class="navbar-form navbar-right" action="#" method="GET">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search..." name="search">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            </span>
+          </div>
+        </form>
+    
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'Profile' %}">Profile</a></li>
+            <li><a href="{% url 'view_cart' %}">Cart</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'userin' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- About Section with Quality and Variety -->
+<div class="container">
+    <!-- Horizontal Line -->
+    <div class="row">
+      <div class="col-xs-12">
+        <hr style="border: 0; height: 1px; background-color: #ccc; margin: 30px 0;">
+      </div>
+    </div>
+  
+    <!-- GREAT QUALITY Section -->
+    <div class="row">
+      <div class="col-xs-12">
+        <h2 style="color: #b3b3b3; font-weight: 300; margin-bottom: 30px;">GREAT QUALITY</h2>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-md-6 col-sm-6">
+        <h3 style="font-weight: bold;">Made by robots</h3>
+        <p style="color: #777;">
+          We are India's first and the only brand to use robotic technique that delivers glasses which are 
+          accurate to 3 decimal places. These machines imported from Germany, ensure perfection on all 
+          front: an automated system that allows to inspect lenses, determine the geometric center, and load 
+          the lenses for edging without the need of a finishing block.
+        </p>
+        
+        <h3 style="font-weight: bold; margin-top: 30px;">Mind of machine</h3>
+        <p style="color: #777;">
+          Our people have zero tolerance to error and our call center aims to delight every customer, solve 
+          their problems and work on their feedbacks.
+        </p>
+      </div>
+      <div class="col-md-6 col-sm-6 text-center">
+        <img src="../static/photos/Sunglasses_Desktop.webp" alt="Robot making glasses" class="img-responsive center-block" style="max-width: 100%; margin-top: 20px;">
+      </div>
+    </div>
+  
+    <!-- Horizontal Line -->
+    <div class="row">
+      <div class="col-xs-12">
+        <hr style="border: 0; height: 1px; background-color: #ccc; margin: 30px 0;">
+      </div>
+    </div>
+  
+    <!-- VARIETY Section -->
+    <div class="row">
+      <div class="col-xs-12">
+        <h2 style="color: #b3b3b3; font-weight: 300; margin-bottom: 30px;">VARIETY</h2>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-md-6 col-sm-6">
+        <h3 style="font-weight: bold;">We let the numbers talk.</h3>
+        <p style="color: #777;">
+          We have over 5000 styles of eyewear, which is 5 times more than that any retailer in India. From big brands like 
+          RayBan and Oakley to the best in house brands.
+        </p>
+        
+        <div class="col-md-6 col-sm-6 text-center">
+            <img src="../static/photos/Sunglasses_Desktop.webp" alt="Variety of glasses" class="img-responsive center-block" style="max-width: 100%; margin-top: 20px;">
+        </div>
+
+        <h3 style="font-weight: bold; margin-top: 30px;">An eye for an eye</h3>
+        <p style="color: #777;">
+          From sunglasses to reading glasses to contact lenses, we make everything that can help you see this beautiful 
+          world with more clarity.
+        </p>
+
+        <div class="col-md-6 col-sm-6 text-center">
+            <img src="../static/photos/Sunglasses_Desktop.webp" alt="Variety of glasses" class="img-responsive center-block" style="max-width: 100%; margin-top: 20px;">
+        </div>
+
+        <h3 style="font-weight: bold; margin-top: 30px;">We got the whole world</h3>
+        <p style="color: #777;">
+            Yes it is true make eyewear for men, women, kids, for all humans of the world.
+        </p>
+
+        <div class="col-md-6 col-sm-6 text-center">
+            <img src="../static/photos/Sunglasses_Desktop.webp" alt="Variety of glasses" class="img-responsive center-block" style="max-width: 100%; margin-top: 20px;">
+        </div>
+        
+        <h3 style="font-weight: bold; margin-top: 30px;">All covered</h3>
+        <p style="color: #777;">
+            We have it all. everyday basics. Everyday fashion. Evening wear. Not just that, we update our styles every year to keep up with fashion trends around the globe, taking inspiration from fashion capitals and the best designers of the world.
+        </p>
+
+      </div>
+      <div class="col-md-6 col-sm-6 text-center">
+        <img src="../static/photos/Sunglasses_Desktop.webp" alt="Variety of glasses" class="img-responsive center-block" style="max-width: 100%; margin-top: 20px;">
+      </div>
+  
+    <div class="row">
+      <div class="col-xs-12">
+        <hr style="border: 0; height: 1px; background-color: #ccc; margin: 30px 0;">
+      </div>
+    </div>
+  </div>
+
+
+</body>
+</html>
