@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>eyeglass</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    .navbar-inverse {
+    background-color: #E5E5E5 !important;
+    border-color: #E5E5E5;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+        color: #000;
+    }
+    /* --------- */
+    .product-card {
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px;
+    padding: 15px;
+    position: relative;
+    height: 100%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .product-img-container {
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 160px;
+  }
+
+  @media (max-width: 767.98px) {
+    .product-img-container {
+        height: 120px;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .product-img-container {
+        height: 140px;
+    }
+  }
+
+  .bestseller-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 8px;
+    z-index: 2;
+  }
+
+  .new-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 8px;
+    z-index: 2;
+  }
+
+  .discount-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #dc3545;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 8px;
+    z-index: 2;
+  }
+
+  .product-info {
+    margin-top: 10px;
+  }
+
+  .product-name {
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  .product-category {
+    color: #666;
+    font-size: 14px;
+  }
+
+  .product-colors {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .product-rating {
+    color: #f8ce0b;
+    margin-bottom: 5px;
+  }
+
+  .product-price {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 16px;
+    margin-right: 5px;
+  }
+
+  .lens-discount {
+    color: #0275d8;
+    font-weight: bold;
+    float: right;
+  }
+
+    /* -------- */
+
+    .footer {
+  background-color: rgb(83, 83, 83);
+  color: #fff;
+  padding: 40px 20px;
+  font-size: 14px;
+  }
+  .footer a {
+    color: #ccc;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    color: #ffffff;
+  }
+  .footer h3 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .footer hr {
+    border-top: 1px solid #ccc;
+  }
+  .app-links img {
+    height: 40px;
+    margin-right: 10px;
+  }
+  .social-icons a {
+    color: #fff;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+  .social-icons a:hover {
+    color: #0d6efd;
+  }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse" style="background-color: grey;">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{% url 'index' %}" style="color: black;">ＯＰＴＩＣＦＲＡＭＥＳ</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{% url 'Profile' %}">Profile</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>  
+          <li><a href="{% url 'view_cart' %}">Cart</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'userin' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          {% endif %}        
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<div><img src="../static/photos/men slide 1.jpg" class="img-responsive" style="width: 100%;" alt="no img"></div>
+
+<div class="container text-center">    
+  <h2>Trending EyeGlasses</h2>
+  <div class="container-fluid">
+    <hr style="
+      border: 0;
+      height: 2px;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0.678), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.678));
+      margin: 30px 0;
+    ">
+  </div>
+  <div class="container py-5">
+    <div class="row g-4">
+        <!-- Product 1 -->
+        {% for i in product %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="product-card">
+                <div class="product-img-container">
+                  <a href="{% url 'product_details' i.pk %}">
+                    <img src="{{i.image.url}}" alt="Oakley Socket 5.5" width="100%"  class="img-fluid w-100 rounded">
+                  </a>
+                </div>
+                <div class="product-info">
+                    <h5 class="product-name">{{i.name}}</h5>
+                    <div class="product-category">{{i.category}}</div>
+                    <div class="product-rating">★★★★☆</div>
+                    <div class="lens-discount">60% Off Lenses</div>
+                    <div class="mt-3">
+                        <div>Frame:</div>
+                        <div class="product-price">Price: {{i.price}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <hr style="
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.678), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.678));
+    margin: 30px 0;
+  ">
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-3 mb-4">
+        <h3>ＯＰＴＩＣＦＲＡＭＥ</h3>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h3>About Us</h3>
+        <ul class="list-unstyled">
+          <li><a href="#">We Are Hiring</a></li>
+          <li><a href="#">Refer And Earn</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Lenskart Coupons</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h3>Help</h3>
+        <ul class="list-unstyled">
+          <li><a href="#">FAQ's</a></li>
+          <li><a href="#">Grievance Redressal</a></li>
+          <li><a href="#">Cardemi</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 mb-4 text-md-end text-center">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="https://www.facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+          <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+          <a href="https://www.linkedin.com" target="_blank"><i class="bi bi-linkedin"></i></a>
+          <a href="https://www.instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3">
+      <div class="mb-2 mb-md-0">
+        <a href="#" class="me-3">T & C</a>
+        <a href="#" class="me-3">Privacy</a>
+        <a href="#" class="me-3">Disclaimer</a>
+      </div>
+      <div class="mb-2 mb-md-0">
+        Version 1.0.0 || Follow Us
+        <span class="social-icons">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-twitter"></i></a>
+        </span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #212121;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+        }
+        
+        .logo {
+            margin-bottom: 40px;
+        }
+        
+        .html5-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-weight: bold;
+            font-size: 36px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            border-radius: 50px;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .input-group-text {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+        }
+        
+        .btn-get-started {
+            background-color: #edd51eba;
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 500;
+            padding: 12px;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-get-started:hover {
+            background-color: #eded1e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 95, 109, 0.3);
+        }
+        
+        .forgot-password, .need-help {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .forgot-password:hover, .need-help:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .create-account {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .create-account:hover {
+            color: #fff;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .bottom-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 576px) {
+            .remember-forgot, .bottom-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        
+        /* Background image overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('../static/photos/men slide 1.jpg') center center/cover no-repeat;
+            opacity: 0.2;
+            z-index: 1;
+        }
+
+        /* Messages styling */
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            border-radius: 25px;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+        }
+        
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+        }
+        
+        .alert-success {
+            background-color: rgba(25, 135, 84, 0.2);
+            border: 1px solid rgba(25, 135, 84, 0.3);
+            color: #20c997;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background overlay -->
+    <div class="bg-overlay"></div>
+    
+    <div class="login-container">
+        <div class="logo">
+            <div class="html5-logo">
+               <a href="{% url 'index' %}"> <img src="../static/photos/logo.png" width="350px" alt="logo"></a>
+            </div>
+        </div>
+        
+        <!-- Display Django Messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Login Form -->
+        <form action="{% url 'userup' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text" name="username" class="form-control" placeholder="Username" aria-label="Username" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input type="email" name="email" class="form-control" placeholder="Email address" aria-label="Email address" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="input-group">
+                  <span class="input-group-text">
+                      <i class="fas fa-lock"></i>
+                  </span>
+                  <input type="password" name="password" class="form-control" placeholder="Password" aria-label="Password" required>
+              </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" required>
+            </div>
+        </div>
+            
+            <button type="submit" class="btn btn-get-started">GET STARTED</button>
+            
+            <div class="bottom-links">
+                <a href="{% url 'userin' %}" class="create-account">Have already an account?</a>
+                <a href="{% url 'index' %}" class="need-help">GO HOME</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

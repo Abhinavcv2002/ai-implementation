@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> Vision Selection</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    .navbar-inverse {
+      background-color: #E5E5E5 !important;
+      border-color: #E5E5E5;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+      color: #000;
+    }
+    /* -------- */
+        
+    h2 {
+        text-align: center;
+        margin: 40px 0;
+        font-weight: 600;
+    }
+    
+    .vision-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        height: 100%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #fff;
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .vision-card:hover {
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .vision-card.selected {
+        border: 2px solid #4361ee;
+        box-shadow: 0 4px 10px rgba(67, 97, 238, 0.2);
+    }
+    
+    .card-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+    
+    .card-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    
+    .discount {
+        color: #38b000;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .original-price {
+        color: #999;
+        text-decoration: line-through;
+        font-size: 0.9rem;
+        margin-left: 5px;
+    }
+    
+    .current-price {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+    
+    .info-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #aaa;
+        font-size: 1rem;
+    }
+    
+    .starting-at {
+        color: #777;
+        font-size: 0.85rem;
+        margin-bottom: 2px;
+    }
+    
+    .continue-btn {
+        background-color: #4361ee;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 30px;
+        font-weight: 600;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .continue-btn:hover {
+        background-color: #3a56d4;
+    }
+    
+    .continue-container {
+        text-align: center;
+        margin: 40px 0;
+    }
+    
+    .basic-option {
+        font-weight: 600;
+        margin-top: 10px;
+    }
+    
+    .divider {
+        border-top: 1px solid #ddd;
+        margin: 60px 0;
+    }
+    
+    .card-section {
+        margin-bottom: 50px;
+    }
+
+    /* -------- */
+
+  .footer {
+  background-color: rgb(83, 83, 83);
+  color: #fff;
+  padding: 40px 20px;
+  font-size: 14px;
+  }
+  .footer a {
+    color: #ccc;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    color: #ffffff;
+  }
+  .footer h3 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .footer hr {
+    border-top: 1px solid #ccc;
+  }
+  .app-links img {
+    height: 40px;
+    margin-right: 10px;
+  }
+  .social-icons a {
+    color: #fff;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+  .social-icons a:hover {
+    color: #0d6efd;
+  }
+</style>
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar" style="background-color: #000;"></span>
+          <span class="icon-bar" style="background-color: #000;"></span>
+          <span class="icon-bar" style="background-color: #000;"></span>
+        </button>
+        <a class="navbar-brand" href="#" style="color: black;">ＯＰＴＩＣＦＲＡＭＥＳ</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" style="color: black;">Cart</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'signout' %}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'userin' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          {% endif %}        
+        </ul>
+      </div>
+    </div>
+  </nav>
+    
+  <div class="container">
+    <!-- First Card Section -->
+    <div class="card-section">
+        <h2>Select a vision need</h2>
+        
+        <div class="row g-4">
+            <!-- Card 1 -->
+            <div class="col-md-4">
+                <div class="vision-card" data-card="bifocals" data-section="first">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Bifocals</h3>
+                    <p class="card-description">Visible-line lenses for seeing at all distances.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$69.99</span>
+                    <span class="original-price">$174.98</span>
+                </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="col-md-4">
+                <div class="vision-card" data-card="readers" data-section="first">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Readers</h3>
+                    <p class="card-description">General-use lenses for seeing up close.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$43.99</span>
+                    <span class="original-price">$109.98</span>
+                </div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="col-md-4">
+                <div class="vision-card" data-card="non-prescription" data-section="first">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Non-Prescription</h3>
+                    <p class="card-description">High-quality lenses with eye protection and no vision correction.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$43.99</span>
+                    <span class="original-price">$109.98</span>
+                    <p class="basic-option">Basic option included</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- Second Card Section -->
+    <div class="card-section">
+        <h2>Select a vision need</h2>
+        
+        <div class="row g-4">
+            <!-- Card 1 -->
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="vision-card" data-card="single-vision" data-section="second">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Single Vision</h3>
+                    <p class="card-description">General-use lenses for seeing close up or far away.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$25.99</span>
+                    <span class="original-price">$64.98</span>
+                </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="vision-card" data-card="progressive" data-section="second">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Progressive No Line</h3>
+                    <p class="card-description">No-line lenses for seeing at all distances.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$129.99</span>
+                    <span class="original-price">$324.98</span>
+                </div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="vision-card" data-card="bifocals-2" data-section="second">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Bifocals</h3>
+                    <p class="card-description">Visible-line lenses for seeing at all distances.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$69.99</span>
+                    <span class="original-price">$174.98</span>
+                </div>
+            </div>
+            
+            <!-- Card 4 -->
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="vision-card" data-card="readers-2" data-section="second">
+                    <i class="fas fa-info-circle info-icon"></i>
+                    <h3 class="card-title">Readers</h3>
+                    <p class="card-description">General-use lenses for seeing up close.</p>
+                    <p class="discount">60% off</p>
+                    <p class="starting-at">Starting at:</p>
+                    <span class="current-price">$43.99</span>
+                    <span class="original-price">$109.98</span>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{% url 'cart' %}"><div class="continue-container">
+            <button class="continue-btn">Continue</button>
+        </div></a>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+      <div class="row">
+  
+        <div class="col-md-3 mb-4">
+          <h3>ＯＰＴＩＣＦＲＡＭＥ</h3>
+        </div>
+  
+        <div class="col-md-3 mb-4">
+          <h3>About Us</h3>
+          <ul class="list-unstyled">
+            <li><a href="#">We Are Hiring</a></li>
+            <li><a href="#">Refer And Earn</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Lenskart Coupons</a></li>
+          </ul>
+        </div>
+  
+        <div class="col-md-3 mb-4">
+          <h3>Help</h3>
+          <ul class="list-unstyled">
+            <li><a href="#">FAQ's</a></li>
+            <li><a href="#">Grievance Redressal</a></li>
+            <li><a href="#">Cardemi</a></li>
+          </ul>
+        </div>
+  
+        <div class="col-md-3 mb-4 text-md-end text-center">
+          <h3>Follow Us</h3>
+          <div class="social-icons">
+            <a href="https://www.facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+            <a href="https://www.linkedin.com" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+  
+      </div>
+  
+      <hr>
+  
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3">
+        <div class="mb-2 mb-md-0">
+          <a href="#" class="me-3">T & C</a>
+          <a href="#" class="me-3">Privacy</a>
+          <a href="#" class="me-3">Disclaimer</a>
+        </div>
+        <div class="mb-2 mb-md-0">
+          Version 1.0.0 || Follow Us
+          <span class="social-icons">
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-twitter"></i></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // JavaScript to handle card selection (only one per section)
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstSectionCards = document.querySelectorAll('.vision-card[data-section="first"]');
+        const secondSectionCards = document.querySelectorAll('.vision-card[data-section="second"]');
+        
+        // First section card selection
+        firstSectionCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards in this section
+                firstSectionCards.forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+            });
+        });
+        
+        // Second section card selection
+        secondSectionCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards in this section
+                secondSectionCards.forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html> 
