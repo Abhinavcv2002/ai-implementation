@@ -370,7 +370,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="filters-panel">
-          <form method="GET" action="{% url 'search_products' %}">
+          <form method="GET" action="{% url 'search_func' %}">
             <input type="hidden" name="q" value="{{ query }}">
             
             <div class="row">
@@ -448,7 +448,7 @@
                 <button type="submit" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 10px;">
                   <i class="fas fa-search"></i> Apply Filters
                 </button>
-                <a href="{% url 'search_products' %}" class="btn btn-default" style="margin-bottom: 10px;">
+                <a href="{% url 'search_func' %}" class="btn btn-default" style="margin-bottom: 10px;">
                   <i class="fas fa-times"></i> Clear Filters
                 </a>
               </div>
@@ -496,56 +496,57 @@
     </div>
 
     <!-- Products Grid -->
-    {% if products %}
-      <div class="container py-5">
-        <div class="row g-4">
-          {% for product in products %}
-            <div class="col-6 col-md-4 col-lg-3">
-              <div class="product-card">
-                <div class="product-img-container">
-                  <!-- Product Badges -->
-                  <div class="new-badge">NEW</div>
-                  {% if product.discount %}
-                    <div class="discount-badge">{{ product.discount }}% Off</div>
-                  {% endif %}
-                  
-                  <a href="{% url 'product_details' product.pk %}">
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="100%" class="img-fluid w-100 rounded">
-                  </a>
-                </div>
-                <div class="product-info">
-                  <h5 class="product-name">{{ product.name }}</h5>
-                  <div class="product-category">
-                    {% if product.category %}{{ product.category.name }}{% endif %}
-                    {% if product.gender %} - {{ product.gender.name }}{% endif %}
-                  </div>
-                  {% if product.color %}
-                    <div class="product-colors">Color: {{ product.color }}</div>
-                  {% endif %}
-                  {% if product.material %}
-                    <div class="product-colors">Material: {{ product.material.name }}</div>
-                  {% endif %}
-                  <div class="product-rating">★★★★☆</div>
-                  <div class="lens-discount">60% Off Lenses</div>
-                  <div class="mt-3">
-                    <div>Frame:</div>
-                    <div class="product-price">₹{{ product.price }}</div>
-                  </div>
-                </div>
+<!-- Products Grid -->
+{% if products %}
+  <div class="container py-5">
+    <div class="row g-4">
+      {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="product-card">
+            <div class="product-img-container">
+              <!-- Product Badges -->
+              <div class="new-badge">NEW</div>
+              <!-- Remove discount badge since there's no discount field -->
+              <!-- {% if product.discount %}
+                <div class="discount-badge">{{ product.discount }}% Off</div>
+              {% endif %} -->
+              
+              <a href="{% url 'product_details' product.pk %}">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="100%" class="img-fluid w-100 rounded">
+              </a>
+            </div>
+            <div class="product-info">
+              <h5 class="product-name">{{ product.name }}</h5>
+              <div class="product-category">
+                {% if product.categorys %}{{ product.categorys.name }}{% endif %}
+                {% if product.gender %} - {{ product.gender.name }}{% endif %}
+              </div>
+              {% if product.color %}
+                <div class="product-colors">Color: {{ product.color }}</div>
+              {% endif %}
+              {% if product.material %}
+                <div class="product-colors">Material: {{ product.material.name }}</div>
+              {% endif %}
+              <div class="product-rating">★★★★☆</div>
+              <div class="lens-discount">60% Off Lenses</div>
+              <div class="mt-3">
+                <div>Frame:</div>
+                <div class="product-price">₹{{ product.price }}</div>
               </div>
             </div>
-          {% endfor %}
+          </div>
         </div>
-      </div>
-    {% else %}
-      <div class="no-results">
-        <i class="fas fa-search"></i>
-        <h3>No products found</h3>
-        <p>Try adjusting your search criteria or browse our categories.</p>
-        <a href="{% url 'search_products' %}" class="btn btn-primary">View All Products</a>
-      </div>
-    {% endif %}
-
+      {% endfor %}
+    </div>
+  </div>
+{% else %}
+  <div class="no-results">
+    <i class="fas fa-search"></i>
+    <h3>No products found</h3>
+    <p>Try adjusting your search criteria or browse our categories.</p>
+    <a href="{% url 'search_func' %}" class="btn btn-primary">View All Products</a>
+  </div>
+{% endif %}
     <!-- Pagination -->
     {% if products.has_other_pages %}
       <div class="pagination-wrapper">

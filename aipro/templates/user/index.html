@@ -197,13 +197,12 @@
           {% endif %}        
         </ul>
         
-    <form class="searchbar" method="POST" action="{% url 'search_func' %}" role="search">
-        {% csrf_token %}
-        <input class="form-control me-2" type="search" placeholder="Search the category" name="search" aria-label="Search" required>
-        <button class="searchbtn" type="submit">Submit
-            <i class='bx bx-search fs-4'></i>
-        </button>
-    </form>
+<form class="searchbar" method="GET" action="{% url 'search_func' %}" role="search">
+    <input class="form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search" required>
+    <button class="searchbtn" type="submit">Submit
+        <i class='bx bx-search fs-4'></i>
+    </button>
+</form>
 
       </div>
     </div>
@@ -304,7 +303,7 @@
 
 
 <div class="container text-center"><br> 
-    <h2 class="section-title">Recommended</h2> <!-- Fixed typo: "Reccommended" → "Recommended" -->
+    <h2 class="section-title">Recommended</h2>
     <div class="container-fluid">
       <hr class="gradient-hr">
     </div>
@@ -323,9 +322,7 @@
             <h4 class="product-title">{{ product.name|truncatewords:5 }}</h4>
             <p class="product-price">
               ₹ {{ product.price }}
-              {% if product.original_price and product.original_price != product.price %}
-                <span class="original-price">₹ {{ product.original_price }}</span>
-              {% endif %}
+              <!-- Remove original_price since it doesn't exist -->
             </p>
           </div>
         </a>
@@ -434,3 +431,4 @@
 
 </body>
 </html>
+

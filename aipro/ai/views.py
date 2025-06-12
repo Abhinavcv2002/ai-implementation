@@ -123,6 +123,109 @@ import logging
 
 
 
+# def index(request):
+#     # Get all products initially
+#     all_products = Product.objects.all()
+#     products = []
+
+#     # Extract product data
+#     product_ids = []
+#     product_vectors = []
+    
+#     for product in all_products:
+#         if product.vector_data:
+#             try:
+#                 vector_data = json.loads(product.vector_data)
+#                 product_ids.append(product.pk)
+#                 product_vectors.append(vector_data)
+#             except (json.JSONDecodeError, ValueError) as e:
+#                 print(f"Error parsing vector data for product {product.pk}: {e}")
+#                 continue
+
+#     if not product_vectors:
+#         print("No valid product vectors found, falling back to default")
+#         products = Product.objects.all()[:4]
+#     else:
+#         try:
+#             # Convert to numpy array first, then to tensor
+#             product_vectors = np.array(product_vectors, dtype=np.float32)
+#             product_vectors = torch.tensor(product_vectors)
+
+#             if request.user.is_authenticated:
+#                 try:
+#                     print("Authenticated user:", request.user.username)
+#                     user = User.objects.get(username=request.user.username)
+#                     user_profile = users.objects.get(name=user)
+                    
+#                     if user_profile.vector_data:
+#                         user_vector = json.loads(user_profile.vector_data)
+                        
+#                         # Get last clicked product from session
+#                         last_clicked_product_id = request.session.get('last_clicked_product')
+                        
+#                         # Recommend products
+#                         recommend_products = recommend_product(
+#                             user_vector, 
+#                             product_vectors, 
+#                             product_ids, 
+#                             top_n=4,
+#                             last_clicked_product_id=last_clicked_product_id
+#                         )
+#                         print("Recommended products:", recommend_products)
+
+#                         if recommend_products:
+#                             # Get product IDs and maintain order
+#                             product_ids_ordered = [item[0] for item in recommend_products]
+#                             preserved_order = Case(
+#                                 *[When(pk=pk, then=pos) for pos, pk in enumerate(product_ids_ordered)]
+#                             )
+#                             products = Product.objects.filter(
+#                                 pk__in=product_ids_ordered
+#                             ).order_by(preserved_order)
+
+#                             print("Products to render:", [p.name for p in products])
+#                         else:
+#                             print("No recommendations generated, using default")
+#                             products = Product.objects.all()[:4]
+#                     else:
+#                         print("User has no vector data, using default products")
+#                         products = Product.objects.all()[:4]
+
+#                 except (User.DoesNotExist, users.DoesNotExist, json.JSONDecodeError) as e:
+#                     print("Error fetching user or parsing user vector:", e)
+#                     products = Product.objects.all()[:4]
+#                 except Exception as e:
+#                     print("Unexpected error in recommendation:", e)
+#                     products = Product.objects.all()[:4]
+#             else:
+#                 print("Unauthenticated user, checking last clicked product")
+#                 last_clicked_product_id = request.session.get('last_clicked_product')
+#                 if last_clicked_product_id:
+#                     try:
+#                         last_clicked_product = Product.objects.get(id=last_clicked_product_id)
+#                         products = Product.objects.filter(categorys=last_clicked_product.categorys)[:4]
+#                     except Product.DoesNotExist:
+#                         products = Product.objects.all()[:4]
+#                 else:
+#                     products = Product.objects.all()[:4]
+                
+#         except Exception as e:
+#             print(f"Error processing product vectors: {e}")
+#             products = Product.objects.all()[:4]
+
+#     # Other product sections
+#     data2 = Product.objects.all()[:4]
+#     data3 = Product.objects.all().order_by('-id')[:3]
+
+#     context = {
+#         'product': all_products,
+#         'products': products,
+#         'data2': data2,
+#         'data3': data3,
+#     }
+
+#     return render(request, 'user/index.html', context)
+
 def index(request):
     # Get all products initially
     all_products = Product.objects.all()
@@ -139,29 +242,39 @@ def index(request):
                 product_ids.append(product.pk)
                 product_vectors.append(vector_data)
             except (json.JSONDecodeError, ValueError) as e:
-                print(f"Error parsing vector data for product {product.pk}: {e}")
+                logger.error(f"Error parsing vector data for product {product.pk}: {e}")
                 continue
 
     if not product_vectors:
-        print("No valid product vectors found, falling back to default")
-        products = Product.objects.all()[:4]
+        logger.info("No valid product vectors found, falling back to default")
+        products = Product.objects.all().order_by('price')[:4]
     else:
         try:
             # Convert to numpy array first, then to tensor
             product_vectors = np.array(product_vectors, dtype=np.float32)
             product_vectors = torch.tensor(product_vectors)
 
+            # Get last clicked product from session
+            last_clicked_product_id = request.session.get('last_clicked_product')
+            logger.info(f"Last clicked product ID: {last_clicked_product_id}")
+            
+            last_clicked_product = None
+            if last_clicked_product_id:
+                try:
+                    last_clicked_product = Product.objects.get(id=last_clicked_product_id)
+                    logger.info(f"Last clicked product: {last_clicked_product.name}, Category: {last_clicked_product.categorys.name if last_clicked_product.categorys else 'None'}")
+                except Product.DoesNotExist:
+                    logger.warning(f"Last clicked product {last_clicked_product_id} not found")
+                    last_clicked_product_id = None
+
             if request.user.is_authenticated:
                 try:
-                    print("Authenticated user:", request.user.username)
+                    logger.info(f"Authenticated user: {request.user.username}")
                     user = User.objects.get(username=request.user.username)
                     user_profile = users.objects.get(name=user)
                     
                     if user_profile.vector_data:
                         user_vector = json.loads(user_profile.vector_data)
-                        
-                        # Get last clicked product from session
-                        last_clicked_product_id = request.session.get('last_clicked_product')
                         
                         # Recommend products
                         recommend_products = recommend_product(
@@ -171,7 +284,7 @@ def index(request):
                             top_n=4,
                             last_clicked_product_id=last_clicked_product_id
                         )
-                        print("Recommended products:", recommend_products)
+                        logger.info(f"Recommended products: {recommend_products}")
 
                         if recommend_products:
                             # Get product IDs and maintain order
@@ -183,35 +296,79 @@ def index(request):
                                 pk__in=product_ids_ordered
                             ).order_by(preserved_order)
 
-                            print("Products to render:", [p.name for p in products])
+                            logger.info(f"Products to render: {[p.name for p in products]}")
                         else:
-                            print("No recommendations generated, using default")
-                            products = Product.objects.all()[:4]
+                            logger.info("No recommendations generated, falling back to category or default")
+                            if last_clicked_product and last_clicked_product.categorys:
+                                # Fallback to category-based recommendations
+                                category_products = Product.objects.filter(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id)
+                                if category_products.count() >= 4:
+                                    products = category_products[:4]
+                                else:
+                                    products = list(category_products)
+                                    remaining_slots = 4 - len(products)
+                                    other_products = Product.objects.exclude(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id).order_by('price')[:remaining_slots]
+                                    products.extend(other_products)
+                                    products = products[:4]
+                            else:
+                                products = Product.objects.all().order_by('price')[:4]
                     else:
-                        print("User has no vector data, using default products")
-                        products = Product.objects.all()[:4]
+                        logger.info("User has no vector data, using category-based recommendations")
+                        if last_clicked_product and last_clicked_product.categorys:
+                            category_products = Product.objects.filter(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id)
+                            if category_products.count() >= 4:
+                                products = category_products[:4]
+                            else:
+                                products = list(category_products)
+                                remaining_slots = 4 - len(products)
+                                other_products = Product.objects.exclude(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id).order_by('price')[:remaining_slots]
+                                products.extend(other_products)
+                                products = products[:4]
+                        else:
+                            products = Product.objects.all().order_by('price')[:4]
 
                 except (User.DoesNotExist, users.DoesNotExist, json.JSONDecodeError) as e:
-                    print("Error fetching user or parsing user vector:", e)
-                    products = Product.objects.all()[:4]
+                    logger.error(f"Error fetching user or parsing user vector: {e}")
+                    if last_clicked_product and last_clicked_product.categorys:
+                        category_products = Product.objects.filter(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id)
+                        if category_products.count() >= 4:
+                            products = category_products[:4]
+                        else:
+                            products = list(category_products)
+                            remaining_slots = 4 - len(products)
+                            other_products = Product.objects.exclude(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id).order_by('price')[:remaining_slots]
+                            products.extend(other_products)
+                            products = products[:4]
+                    else:
+                        products = Product.objects.all().order_by('price')[:4]
                 except Exception as e:
-                    print("Unexpected error in recommendation:", e)
-                    products = Product.objects.all()[:4]
+                    logger.error(f"Unexpected error in recommendation: {e}")
+                    products = Product.objects.all().order_by('price')[:4]
             else:
-                print("Unauthenticated user, checking last clicked product")
-                last_clicked_product_id = request.session.get('last_clicked_product')
-                if last_clicked_product_id:
-                    try:
-                        last_clicked_product = Product.objects.get(id=last_clicked_product_id)
-                        products = Product.objects.filter(categorys=last_clicked_product.categorys)[:4]
-                    except Product.DoesNotExist:
-                        products = Product.objects.all()[:4]
+                logger.info("Unauthenticated user, using category-based recommendations")
+                if last_clicked_product and last_clicked_product.categorys:
+                    category_products = Product.objects.filter(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id)
+                    if category_products.count() >= 4:
+                        products = category_products[:4]
+                    else:
+                        products = list(category_products)
+                        remaining_slots = 4 - len(products)
+                        if last_clicked_product:
+                            other_products = Product.objects.exclude(categorys=last_clicked_product.categorys).exclude(id=last_clicked_product_id)
+                            other_products = sorted(other_products, key=lambda p: abs(p.price - last_clicked_product.price))[:remaining_slots]
+                            products.extend(other_products)
+                        else:
+                            other_products = Product.objects.all().order_by('price')[:remaining_slots]
+                            products.extend(other_products)
+                        products = products[:4]
+                    logger.info(f"Products for unauthenticated user: {[p.name for p in products]}")
                 else:
-                    products = Product.objects.all()[:4]
-                
+                    logger.info("No last clicked product, using default")
+                    products = Product.objects.all().order_by('price')[:4]
+
         except Exception as e:
-            print(f"Error processing product vectors: {e}")
-            products = Product.objects.all()[:4]
+            logger.error(f"Error processing product vectors: {e}")
+            products = Product.objects.all().order_by('price')[:4]
 
     # Other product sections
     data2 = Product.objects.all()[:4]
@@ -225,8 +382,6 @@ def index(request):
     }
 
     return render(request, 'user/index.html', context)
-
-
 def men(request):
     product = Product.objects.all()
     return render(request, 'user/men.html', {'product' : product})
@@ -649,6 +804,98 @@ def order_summary(request):
 
 
 
+logger = logging.getLogger(__name__)
+
+# def product_details(request, pk):
+#     product = get_object_or_404(Product, id=pk)
+
+#     # Track product click
+#     if request.user.is_authenticated:
+#         try:
+#             user_profile = users.objects.get(name=request.user)  # Replace 'name' with 'user' if needed
+#             # Create ViewHistory if it doesn't exist
+#             view_history, created = ViewHistory.objects.get_or_create(
+#                 user=user_profile,
+#                 product=product
+#             )
+#             if created:
+#                 logger.info(f"ViewHistory created for user {user_profile} and product {product.name}")
+#             else:
+#                 logger.info(f"ViewHistory already exists for user {user_profile} and product {product.name}")
+
+#             # Update user vector
+#             try:
+#                 # Get user search and view history
+#                 user_search = [s.query for s in SearchHistory.objects.filter(user=user_profile)]
+#                 user_products = [p.product.name for p in ViewHistory.objects.filter(user=user_profile)]
+
+#                 # Prepare data for vectorization
+#                 user_data = [{
+#                     'user_id': request.user.id,
+#                     'product': ','.join(user_products) if user_products else '',
+#                     'search': ','.join(user_search) if user_search else ''
+#                 }]
+#                 df = pd.DataFrame(user_data)
+
+#                 # Vectorize and save
+#                 user_vectors = vectorize_user_with_search(df)
+#                 if user_vectors:
+#                     user_profile.vector_data = json.dumps(user_vectors[0])
+#                     user_profile.save()
+#                     logger.info(f"User vector updated for user {user_profile}")
+#                 else:
+#                     logger.warning(f"Failed to vectorize user {user_profile}")
+#             except Exception as e:
+#                 logger.error(f"Error updating user vector for {user_profile}: {e}")
+
+#         except users.DoesNotExist:
+#             logger.warning(f"User profile not found for authenticated user {request.user.username}")
+
+#     # Store in session
+#     request.session['last_clicked_product'] = pk
+#     request.session.modified = True
+
+#     images = [img for img in [
+#         product.image, product.image1, product.image2,
+#         product.image3, product.image4, product.image5
+#     ] if img]
+
+#     cart_product_ids = []
+#     cart_item_count = 0
+
+#     if request.user.is_authenticated:
+#         cart_items = Cart.objects.filter(user=request.user)
+#         cart_product_ids = list(cart_items.values_list('product_id', flat=True))
+#         cart_item_count = cart_items.count()
+
+#     related_products = Product.objects.filter(
+#         categorys=product.categorys
+#     ).exclude(id=pk)[:4]
+
+#     product_reviews = reviews.objects.filter(pname=product)
+
+#     is_reviewed = False
+#     if request.user.is_authenticated:
+#         try:
+#             user_profile = users.objects.get(name=request.user)  # Replace 'name' with 'user' if needed
+#             is_reviewed = reviews.objects.filter(uname=user_profile, pname=product).exists()
+#         except users.DoesNotExist:
+#             pass
+
+#     context = {
+#         'product': product,
+#         'images': images,
+#         'cart_product_ids': cart_product_ids,
+#         'cart_item_count': cart_item_count,
+#         'page_title': f"{product.name} - OPTICFRAMES",
+#         'first_image': images[0] if images else None,
+#         'related_products': related_products,
+#         'reviews': product_reviews,
+#         'is_reviewed': is_reviewed,
+#     }
+
+#     return render(request, 'user/product_details.html', context)
+
 def product_details(request, pk):
     product = get_object_or_404(Product, id=pk)
 
@@ -656,13 +903,42 @@ def product_details(request, pk):
     if request.user.is_authenticated:
         try:
             user_profile = users.objects.get(name=request.user)
-            ViewHistory.objects.create(user=user_profile, product=product)
+            view_history, created = ViewHistory.objects.get_or_create(
+                user=user_profile,
+                product=product
+            )
+            if created:
+                logger.info(f"ViewHistory created for user {user_profile} and product {product.name}")
+            else:
+                logger.info(f"ViewHistory already exists for user {user_profile} and product {product.name}")
+
+            # Update user vector
+            try:
+                user_search = [s.query for s in SearchHistory.objects.filter(user=user_profile)]
+                user_products = [p.product.name for p in ViewHistory.objects.filter(user=user_profile)]
+                user_data = [{
+                    'user_id': request.user.id,
+                    'product': ','.join(user_products) if user_products else '',
+                    'search': ','.join(user_search) if user_search else ''
+                }]
+                df = pd.DataFrame(user_data)
+                user_vectors = vectorize_user_with_search(df)
+                if user_vectors:
+                    user_profile.vector_data = json.dumps(user_vectors[0])
+                    user_profile.save()
+                    logger.info(f"User vector updated for user {user_profile}")
+                else:
+                    logger.warning(f"Failed to vectorize user {user_profile}")
+            except Exception as e:
+                logger.error(f"Error updating user vector for {user_profile}: {e}")
+
         except users.DoesNotExist:
-            pass
+            logger.warning(f"User profile not found for authenticated user {request.user.username}")
 
     # Store in session
     request.session['last_clicked_product'] = pk
     request.session.modified = True
+    logger.info(f"Set last_clicked_product in session: {pk}")
 
     images = [img for img in [
         product.image, product.image1, product.image2,
@@ -704,6 +980,8 @@ def product_details(request, pk):
     }
 
     return render(request, 'user/product_details.html', context)
+
+
 def lenses_page(request):
     return render(request, 'user/lenses_page.html')
 
@@ -826,6 +1104,7 @@ def adminadd(request):
         'frame_shapes': frame_shapes,
         'frame_styles': frame_styles,
     })
+
 @login_required
 def adminedit(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -884,91 +1163,172 @@ def admin_logout_view(request):
     logout(request)
     return render(request, 'adminpage/adminin.html')
 
+from django.core.paginator import Paginator
+
+import logging
+import pandas as pd
+import json
+import numpy as np
+import torch
+from django.shortcuts import render, redirect
+from django.db.models import Q, Case, When
+from django.core.paginator import Paginator
+from sentence_transformers import util
+from .models import Product, users, SearchHistory, ViewHistory, Cart, category, Gender, Material
+
+logger = logging.getLogger(__name__)
+
 def types(request):
-    return list(Product.objects.values_list('category', flat=True).distinct())
+    return list(Product.objects.values_list('categorys__name', flat=True).distinct())
 
 def search_func(request):
     if request.method == 'GET':
-        query = request.GET.get('q', '').strip()
+        # Get query parameters
+        query = request.GET.get('search', '').strip()
+        category_id = request.GET.get('category', '')
+        gender_id = request.GET.get('gender', '')
+        material_id = request.GET.get('material', '')
+        min_price = request.GET.get('min_price', '')
+        max_price = request.GET.get('max_price', '')
+        sort_by = request.GET.get('sort', 'name')  # Default to Name A-Z
+
         if not query:
-            return redirect('index')  # Redirect if query is empty
+            logger.info("Empty search query, redirecting to index")
+            return redirect('index')
+
+        # Fetch filter options
+        categories = category.objects.all()
+        genders = Gender.objects.all()
+        materials = Material.objects.all()
 
         # Initialize context
         context = {
             'query': query,
-            'results': [],  # Match template variable
+            'categories': categories,
+            'genders': genders,
+            'materials': materials,
+            'selected_category': category_id,
+            'selected_gender': gender_id,
+            'selected_material': material_id,
+            'min_price': min_price,
+            'max_price': max_price,
+            'sort_by': sort_by,
             'cart_item_count': 0,
-            'wishlist_item_count': 0,
+            'wishlist_item_count': 0,  # No Wishlist model; set to 0
+            'category': types(request),
+            'total_results': 0,
         }
 
         # Handle authenticated user
         if request.user.is_authenticated:
             try:
-                user_obj = users.objects.get(user=request.user)  # Use user field, not name
-                # Save search query
+                user_obj = users.objects.get(name=request.user)
                 SearchHistory.objects.create(query=query, user=user_obj)
 
-                # Get user search and view history
-                user_search = [s.query for s in SearchHistory.objects.filter(user=user_obj)]
-                user_products = [p.product.name for p in ViewHistory.objects.filter(user=user_obj)]
+                try:
+                    user_search = [s.query for s in SearchHistory.objects.filter(user=user_obj)]
+                    user_products = [p.product.name for p in ViewHistory.objects.filter(user=user_obj)]
+                    user_data = [{
+                        'user_id': request.user.id,
+                        'product': ','.join(user_products) if user_products else '',
+                        'search': ','.join(user_search) if user_search else ''
+                    }]
+                    df = pd.DataFrame(user_data)
+                    user_vectors = vectorize_user_with_search(df)
+                    if user_vectors:
+                        user_obj.vector_data = json.dumps(user_vectors[0].tolist())
+                        user_obj.save()
+                        logger.info(f"User vector updated for {user_obj}")
+                    else:
+                        logger.warning(f"Failed to vectorize user {user_obj}")
+                except Exception as e:
+                    logger.error(f"Error updating user vector: {e}")
 
-                # Prepare data for vectorization
-                user_data = [{
-                    'user_id': request.user.id,
-                    'product': ','.join(user_products) if user_products else '',
-                    'search': ','.join(user_search) if user_search else ''
-                }]
-                df = pd.DataFrame(user_data)
-
-                # Update user vector
-                user_vectors = vectorize_user_with_search(df)
-                user_obj.vector_data = json.dumps(user_vectors[0].tolist())
-                user_obj.save()
-
-                # Cart and wishlist counts
-                # context['cart_item_count'] = Cart.objects.filter(user=request.user).count()
+                context['cart_item_count'] = Cart.objects.filter(user=request.user).count()
             except users.DoesNotExist:
-                logger.info(f"No user profile for {request.user.username}")
+                logger.warning(f"No user profile for {request.user.username}")
 
-        # Search products by name or category
-        results = Product.objects.filter(
-            Q(name__icontains=query) | Q(category__icontains=query)
-        ).distinct()
+        # Build the product query
+        query_filters = Q()
+        if query:
+            query_filters &= (Q(name__icontains=query) | Q(categorys__name__icontains=query))
 
-        # Optional: Enhance with vector-based search
-        if results and request.user.is_authenticated and user_obj.vector_data:
+        # Apply filters
+        if category_id:
+            query_filters &= Q(categorys__id=category_id)
+        if gender_id:
+            query_filters &= Q(gender__id=gender_id)
+        if material_id:
+            query_filters &= Q(material__id=material_id)
+        if min_price:
             try:
-                user_vector = torch.tensor(json.loads(user_obj.vector_data), dtype=torch.float32)
-                product_ids = []
-                product_vectors = []
-                for product in results:
-                    if product.vector_data:
-                        try:
-                            vector = json.loads(product.vector_data)
-                            product_ids.append(product.pk)
-                            product_vectors.append(vector)
-                        except json.JSONDecodeError:
-                            logger.warning(f"Invalid vector_data for Gallery ID {product.pk}")
-                            continue
+                query_filters &= Q(price__gte=float(min_price))
+            except ValueError:
+                logger.warning(f"Invalid min_price: {min_price}")
+        if max_price:
+            try:
+                query_filters &= Q(price__lte=float(max_price))
+            except ValueError:
+                logger.warning(f"Invalid max_price: {max_price}")
 
-                if product_vectors:
-                    product_vectors = torch.tensor(product_vectors, dtype=torch.float32)
-                    similarities = util.cos_sim(user_vector, product_vectors)
-                    similarity_scores = similarities[0].cpu().numpy()
-                    sorted_indices = np.argsort(similarity_scores)[::-1]
-                    top_n = min(10, len(product_ids))  # Limit to 10 results
-                    top_product_ids = [product_ids[idx] for idx in sorted_indices[:top_n]]
-                    preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(top_product_ids)])
-                    results = results.filter(pk__in=top_product_ids).order_by(preserved_order)
+        # Search products
+        results = Product.objects.filter(query_filters).distinct()
+        logger.info(f"Search results: {[p.id for p in results]}")
+
+        # Vector-based ranking for authenticated users (if no sort specified)
+        if results and request.user.is_authenticated and sort_by not in ['name', 'price_low', 'price_high', 'newest']:
+            try:
+                user_obj = users.objects.get(name=request.user)
+                if user_obj.vector_data:
+                    user_vector = torch.tensor(json.loads(user_obj.vector_data), dtype=torch.float32)
+                    product_ids = []
+                    product_vectors = []
+                    for product in results:
+                        if product.vector_data and product.pk:
+                            try:
+                                vector = json.loads(product.vector_data)
+                                product_ids.append(product.pk)
+                                product_vectors.append(vector)
+                            except json.JSONDecodeError:
+                                logger.warning(f"Invalid vector_data for product {product.id}")
+                                continue
+
+                    if product_vectors:
+                        product_vectors = torch.tensor(product_vectors, dtype=torch.float32)
+                        similarities = util.cos_sim(user_vector, product_vectors)
+                        similarity_scores = similarities[0].numpy()
+                        sorted_indices = np.argsort(similarity_scores)[::-1]
+                        top_n = min(len(product_ids), 10)
+                        top_product_ids = [product_ids[i] for i in sorted_indices[:top_n]]
+                        preserved_order = Case(
+                            *[When(pk=pk, then=pos) for pos, pk in enumerate(top_product_ids)]
+                        )
+                        results = Product.objects.filter(pk__in=top_product_ids).order_by(preserved_order)
             except Exception as e:
-                logger.error(f"Vector search error for user {request.user.username}: {str(e)}")
+                logger.error(f"Vector search error for user {request.user.username}: {e}")
 
-        context['results'] = results
-        context['category'] = types(request)
+        # Apply sorting
+        if sort_by == 'name':
+            results = results.order_by('name')
+        elif sort_by == 'price_low':
+            results = results.order_by('price')
+        elif sort_by == 'price_high':
+            results = results.order_by('-price')
+        elif sort_by == 'newest':
+            results = results.order_by('-id')
+
+        # Pagination
+        paginator = Paginator(results, 4)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['products'] = page_obj  # Use 'products' to match template
+        context['total_results'] = results.count()
 
         return render(request, 'user/search_func.html', context)
 
-    return redirect('index')  # Redirect for non-GET requests
+    logger.info("Non-GET request to search_func, redirecting to index")
+    return redirect('index')
 
 # def search_func(request):
 #     if request.method == 'POST':
@@ -1038,7 +1398,7 @@ def addReview(request, pk):
 
         if not rating or not description:
             messages.error(request, "Rating and description are required.")
-            return redirect('product_detail', pk=pk)
+            return redirect('product_details', pk=pk)
 
         try:
             rating = int(rating)
@@ -1046,7 +1406,7 @@ def addReview(request, pk):
                 raise ValueError
         except ValueError:
             messages.error(request, "Rating must be a valid number between 1 and 5.")
-            return redirect('product_detail', pk=pk)
+            return redirect('product_details', pk=pk)
 
         product = get_object_or_404(Product, pk=pk)
 
@@ -1054,11 +1414,11 @@ def addReview(request, pk):
             user_profile = users.objects.get(name=request.user)
         except users.DoesNotExist:
             messages.error(request, "User profile not found.")
-            return redirect('product_detail', pk=pk)
+            return redirect('product_details', pk=pk)
 
         if reviews.objects.filter(uname=user_profile, pname=product).exists():
             messages.error(request, "You have already reviewed this product.")
-            return redirect('product_detail', pk=pk)
+            return redirect('product_details', pk=pk)
 
         review = reviews.objects.create(
             rating=rating,
@@ -1091,9 +1451,9 @@ def addReview(request, pk):
             messages.warning(request, f"Review saved, but vector update failed: {e}")
 
         messages.success(request, "Review submitted successfully!")
-        return redirect('product_detail', pk=pk)
+        return redirect('product_details', pk=pk)
 
-    return redirect('product_detail', pk=pk)    
+    return redirect('product_details', pk=pk)
 # -------------------------------------------------------------------- #
 @login_required
 def create_order(request, product_id):
